@@ -46,9 +46,7 @@ public class Twinkle {
     public class func twinkle(_ view: UIView, image: UIImage? = nil) {
         var twinkleLayers: [TwinkleLayer] = []
         
-        let upperBound: UInt32 = 10
-        let lowerBound: UInt32 = 5
-        let count: UInt = UInt(arc4random_uniform(upperBound) + lowerBound)
+        let count: UInt = 100
         
         for i in 0..<count {
             let twinkleLayer: TwinkleLayer = image == nil ? TwinkleLayer() : TwinkleLayer(image: image!)
@@ -61,7 +59,7 @@ public class Twinkle {
             
             twinkleLayer.addPositionAnimation()
             twinkleLayer.addRotationAnimation()
-            twinkleLayer.addFadeInOutAnimation( CACurrentMediaTime() + CFTimeInterval(0.15 * Float(i)))
+            twinkleLayer.addFadeInOutAnimation( CACurrentMediaTime() + CFTimeInterval(0.55 * Float(i)))
         }
         
         twinkleLayers.removeAll(keepingCapacity: false)
@@ -106,14 +104,14 @@ internal class TwinkleLayer: CAEmitterLayer {
         let emitterCells: [CAEmitterCell] = [CAEmitterCell(), CAEmitterCell()]
         for cell in emitterCells {
             cell.birthRate = 8
-            cell.lifetime = 1.25
+            cell.lifetime = 2.25
             cell.lifetimeRange = 0
             cell.emissionRange = (.pi / 4)
             cell.velocity = 2
             cell.velocityRange = 18
-            cell.scale = 0.65
-            cell.scaleRange = 0.7
-            cell.scaleSpeed = 0.6
+            cell.scale = 0.65 / 1.5
+            cell.scaleRange = 0.7 / 1.5
+            cell.scaleSpeed = 0.6 / 1.5
             cell.spin = 0.9
             cell.spinRange = .pi
             cell.color = UIColor(white: 1.0, alpha: 0.3).cgColor
@@ -138,6 +136,8 @@ fileprivate let TwinkleLayerPositionAnimationKey = "positionAnimation"
 fileprivate let TwinkleLayerTransformAnimationKey = "transformAnimation"
 fileprivate let TwinkleLayerOpacityAnimationKey = "opacityAnimation"
 
+let scaleFactor = 1.5
+
 extension TwinkleLayer {
     
     // MARK: animation support
@@ -145,7 +145,7 @@ extension TwinkleLayer {
     internal func addPositionAnimation() {
         CATransaction.begin()
         let keyFrameAnim = CAKeyframeAnimation(keyPath: "position")
-        keyFrameAnim.duration = 0.3
+        keyFrameAnim.duration = 0.3 * scaleFactor
         keyFrameAnim.isAdditive = true
         keyFrameAnim.repeatCount = MAXFLOAT
         keyFrameAnim.isRemovedOnCompletion = false
@@ -163,7 +163,7 @@ extension TwinkleLayer {
     internal func addRotationAnimation() {
         CATransaction.begin()
         let keyFrameAnim = CAKeyframeAnimation(keyPath: "transform")
-        keyFrameAnim.duration = 0.3
+        keyFrameAnim.duration = 0.3 * scaleFactor
         keyFrameAnim.valueFunction = CAValueFunction(name: CAValueFunctionName.rotateZ)
         keyFrameAnim.isAdditive = true
         keyFrameAnim.repeatCount = MAXFLOAT
@@ -184,7 +184,7 @@ extension TwinkleLayer {
         fadeAnimation.repeatCount = 2
         
         fadeAnimation.autoreverses = true // fade in then out
-        fadeAnimation.duration = 0.4
+        fadeAnimation.duration = 0.4 * scaleFactor
         fadeAnimation.fillMode = CAMediaTimingFillMode.forwards
         fadeAnimation.beginTime = beginTime
         CATransaction.setCompletionBlock({
